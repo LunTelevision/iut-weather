@@ -1,0 +1,50 @@
+name: iut-weather
+
+services:
+  app:
+    container_name: weather-application
+    image: ${IMAGE:-donovanbroquin/iut-student-workspace:latest}
+    restart: &restart unless-stopped
+    ports:
+      - 8081:8080
+      - 5173:5173
+    volumes:
+      - .:/app
+    networks: &networks
+      - iut-weather
+
+  postgresql:
+    container_name: weather-postgresql
+    image: postgres:18.6-alpine3.23
+    restart: *restart
+    environment:
+      - POSTGRES_USER=iutweather
+      - POSTGRES_PASSWORD=iutweather
+      - POSTGRES_DB=iutweather
+    ports:
+      - 5434:5432
+    volumes:
+      - weather_postgres_data:/var/lib/postgresql
+    networks: *networks
+
+  redis:
+    container_name: weather-redis
+    image: redis:8.10.1-alpine3.23
+    restart: *restart
+    networks: *networks
+
+  mailpit:
+    container_name: weather-mailpit
+    image: axllent/mailpit:v1.31
+    restart: *restart
+    ports:
+      - 8025:8025
+    networks: *networks
+
+volumes:
+  weather_postgres_data:
+
+networks:
+  iut-weather:
+    name: iut-weather
+    driver: bridge

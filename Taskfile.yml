@@ -1,0 +1,25 @@
+# yaml-language-server: $schema=https://taskfile.dev/schema.json
+
+version: '3'
+
+tasks:
+  down:
+    desc: Remove the local Compose stack
+    cmds:
+      - docker compose down
+
+  up:
+    desc: Create the local Compose stack
+    deps:
+      - down
+    aliases:
+      - up
+    cmds:
+      - docker compose up --remove-orphans -d
+
+  local:terminal:
+    desc: Open a terminal into the local Compose stack's application container
+    aliases:
+      - term
+    cmds:
+      - docker exec -it weather-application /usr/bin/fish
