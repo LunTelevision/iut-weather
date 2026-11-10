@@ -12,9 +12,13 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('place_user', function (Blueprint $table) {
-            $table->id();
-            $table->timestamps();
-        });
+    $table->foreignId('place_id')->constrained()->cascadeOnDelete();
+    $table->foreignId('user_id')->constrained()->cascadeOnDelete();
+    $table->boolean('is_favorite')->default(false);
+    $table->boolean('send_forecast')->default(false);
+
+    $table->primary(['place_id', 'user_id']);
+});
     }
 
     /**
